@@ -1,26 +1,26 @@
 $(function () {
-  $('#scores-table a:first').tab('show'),
-  $('#opener').on('click', function () {
-    var a = $('#slide-panel');
-    return a.hasClass('visible') ? ((a.removeClass('visible').animate({'margin-left': '-300px'}), $('#content').css({'margin-right': '0px'})),$('#news').fadeIn(500),$('#about').fadeIn(500)) :
-                                   ((a.addClass('visible').animate({'margin-left': '0px'}), $('#content').css({'margin-right': '-300px'})),$('#news').fadeOut(500),$('#about').fadeOut(500)),!1
-  })
+    $('#scores-table a:first').tab('show'),
+        $('#opener').on('click', function () {
+            var a = $('#slide-panel');
+            return a.hasClass('visible') ? ((a.removeClass('visible').animate({ 'margin-left': '-300px' }), $('#content').css({ 'margin-right': '0px' })), $('#news').fadeIn(500), $('#about').fadeIn(500)) :
+                ((a.addClass('visible').animate({ 'margin-left': '0px' }), $('#content').css({ 'margin-right': '-300px' })), $('#news').fadeOut(500), $('#about').fadeOut(500)), !1
+        })
 });
 
-(function(wHandle, wjQuery) {
+(function (wHandle, wjQuery) {
     if (navigator.appVersion.indexOf("MSIE") != -1)
         alert("You're using a pretty old browser, some parts of the website might not work properly.");
 
-    Date.now || (Date.now = function() {
+    Date.now || (Date.now = function () {
         return (+new Date).getTime();
     });
-    Array.prototype.peek = function() {
+    Array.prototype.peek = function () {
         return this[this.length - 1];
     };
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('body').append('<canvas id="nodes"></canvas>');
         $('#nodes').css({
-            'background': 'rgba(0,0,0,.7) url("img/map-bg.png")',
+            //'background': 'rgba(0,0,0,.7) url("img/map-bg.png")',
             'border-radius': '7px',
             'border': '1px solid rgba(0,0,0,0.2)',
             'padding': '0',
@@ -32,27 +32,27 @@ $(function () {
             'bottom': '15px',
             'display': 'none'
         });
-        $('#jversion').text( VERSION );
+        $('#jversion').text(VERSION);
     });
     // Edit the skin URL !!!
     var CONNECT_TO
-      , SKIN_URL = "http://google.com?/skins/"
-      , VERSION = "v7.0220"
-      , USE_HTTPS = "https:" == wHandle.location.protocol
-      , BORDER_DEFAULT = {top: -2E3, left: -2E3, right: 2E3, bottom: 2E3}
-      , PI_2 = Math.PI * 2
-      , SEND_104 = new Uint8Array([104, 1, 0, 0, 0])
-      , SEND_254 = new Uint8Array([254, 7, 0, 0, 0])
-      , SEND_255 = new Uint8Array([255, 1, 0, 0, 0])
-      , FPS_MAXIMUM = 1000
-      , ws = null
-      , touches = []
-      , touchStartX = 0
-      , touchStartY = 0
-      , touchMove = false
-      , disconnectDelay = 1
-      , UINT8_CACHE = {
-            1:  new Uint8Array([1]),
+        , SKIN_URL = "http://google.com?/skins/"
+        , VERSION = "v7.0220"
+        , USE_HTTPS = "https:" == wHandle.location.protocol
+        , BORDER_DEFAULT = { top: -2E3, left: -2E3, right: 2E3, bottom: 2E3 }
+        , PI_2 = Math.PI * 2
+        , SEND_104 = new Uint8Array([104, 1, 0, 0, 0])
+        , SEND_254 = new Uint8Array([254, 7, 0, 0, 0])
+        , SEND_255 = new Uint8Array([255, 1, 0, 0, 0])
+        , FPS_MAXIMUM = 1000
+        , ws = null
+        , touches = []
+        , touchStartX = 0
+        , touchStartY = 0
+        , touchMove = false
+        , disconnectDelay = 1
+        , UINT8_CACHE = {
+            1: new Uint8Array([1]),
             17: new Uint8Array([17]),
             21: new Uint8Array([21]),
             18: new Uint8Array([18]),
@@ -61,7 +61,8 @@ $(function () {
             23: new Uint8Array([23]),
             24: new Uint8Array([24]),
             25: new Uint8Array([25]),
-            254:new Uint8Array([254]) };
+            254: new Uint8Array([254])
+        };
 
     function Disconnect() {
         if (!ws) return;
@@ -78,7 +79,7 @@ $(function () {
         resetGameVariables();
     };
     function resetGameVariables() {
-        nodesID = { };
+        nodesID = {};
         nodes = [];
         myNodes = [];
         deadNodes = [];
@@ -105,7 +106,7 @@ $(function () {
         serverStats = null;
         leaderboardCanvas = null;
         serverStatCanvas = null;
-        stats = {virus: 0, pellet: 0, cells: 0, players: 0, score: 0 };
+        stats = { virus: 0, pellet: 0, cells: 0, players: 0, score: 0 };
         gamestart = null;
     };
     function Connect(to) {
@@ -145,7 +146,7 @@ $(function () {
             } else $('input#mmonoff').prop('checked', false);
     };
     function WsMessage(data) {
-        var reader = new Reader(new DataView(data.data), 0, true),
+        var reader = new Reader(data.data, 0, true),
             i, count,
             packet = reader.getUint8();
         switch (packet) {
@@ -164,8 +165,8 @@ $(function () {
                     nameColor = (r << 16 | g << 8 | b).toString(16);
                 while (nameColor.length < 6) nameColor = '0' + nameColor;
                 nameColor = '#' + nameColor;
-                name = reader.getStringUCS();
-                message = reader.getStringUCS();
+                name = reader.getStringUTF8();
+                message = reader.getStringUTF8();
                 chatAlphaWait += Math.max(10000, 1000 + message.length * 100);
                 chatMessages.push({
                     server: !!(flags & 0x80),
@@ -205,7 +206,7 @@ $(function () {
                     // Game type and server name is given
                     gameType = reader.getUint32();
                     serverVersion = reader.getStringUTF8();
-                    serverStatID = setInterval(function() {
+                    serverStatID = setInterval(function () {
                         // Server stat
                         lastMessageTime = Date.now();
                         WsSend(UINT8_CACHE[254]);
@@ -225,7 +226,7 @@ $(function () {
                 leaderboard = [];
                 if (leaderboardType != 0x30) {
                     leaderboardType = 0x30;
-                    log.info("Got somewhat deprecated leaderboard type 48 (0x30). Server-side is possibly Ogar")
+                    console.info("Got somewhat deprecated leaderboard type 48 (0x30). Server-side is possibly Ogar")
                 }
 
                 count = reader.getUint32();
@@ -234,15 +235,16 @@ $(function () {
                 drawLeaderboard();
                 break;
             case 0x31:
+                console.log("leader")
                 // FFA list
-                if(useutf8 == null) break;
+                if (useutf8 == null) break;
                 leaderboard = [];
                 leaderboardType = 0x31;
                 count = reader.getUint32();
                 for (i = 0; i < count; ++i) {
                     leaderboard.push({
                         me: reader.getUint32(),
-                        name: reader.getStringUCS() || "An unnamed cell"
+                        name: reader.getStringUTF8() || "An unnamed cell"
                     });
                 }
                 drawLeaderboard();
@@ -287,7 +289,7 @@ $(function () {
                     updName = !!(flags & 0x08);
                     updSkin = !!(flags & 0x04);
                     updProt = !!(flags & 0x40); // New, use Unicode rather then UTF8 for name reading
-                    if(useutf8 == null && updName) { useutf8 = updProt; log.debug("Use Unicode player names : " + updProt ); }
+                    if (useutf8 == null && updName) { useutf8 = updProt; log.debug("Use Unicode player names : " + updProt); }
                     var color = null,
                         name = null,
                         skin = null,
@@ -302,8 +304,8 @@ $(function () {
 
                     if (updSkin) skin = reader.getStringUTF8();
                     if (updName) {
-                        if(updProt) name = reader.getStringUCS(); else name = reader.getStringUTF8();
-                        if(skin == null) skin = '%default';
+                        if (updProt) name = reader.getStringUTF8(); else name = reader.getStringUTF8();
+                        if (skin == null) skin = '%default';
                     }
                     if (nodesID.hasOwnProperty(id)) {
                         node = nodesID[id];
@@ -320,8 +322,7 @@ $(function () {
                         nodes.push(node);
                     }
 
-                    if (-1 != myNodes.indexOf(id))
-                    {
+                    if (-1 != myNodes.indexOf(id)) {
                         myposx = border.right + x;
                         myposy = border.bottom + y;
                     }
@@ -349,11 +350,11 @@ $(function () {
                         _nCache.height = sz * 2;
                         pCtx.lineWidth = lW;
                         pCtx.lineCap = pCtx.lineJoin = "round";
-                        if(settings.qualityRef.smoothRender < 0.4) {
+                        if (settings.qualityRef.smoothRender < 0.4) {
                             pCtx.shadowBlur = 3;
                             pCtx.shadowColor = node.color;
                         }
-                        var fill = mainCtx.createRadialGradient(sz,sz,0,sz,sz, node.nSize - lW);
+                        var fill = mainCtx.createRadialGradient(sz, sz, 0, sz, sz, node.nSize - lW);
                         settings.darkTheme ? fill.addColorStop(0, 'rgba(0,0,0,0.6)') : fill.addColorStop(0, 'rgba(255,255,255,0.6)');
                         fill.addColorStop(1, node.color);
                         pCtx.fillStyle = fill;
@@ -379,6 +380,7 @@ $(function () {
                 _cZoom = reader.getFloat32();
                 break;
             case 0x68:
+                console.log("mini")
                 var temp = setTimeout(function () {
                     // Minimap Draw
                     var k = border.right * 2;
@@ -392,15 +394,15 @@ $(function () {
                     while (1) {
                         var id = reader.getUint32();
                         if (0 === id) break;
-                        var posx = 200 * ( border.right + reader.getInt32() ) / k;
-                        var posy = 200 * ( border.bottom + reader.getInt32() ) / j;
+                        var posx = 200 * (border.right + reader.getInt32()) / k;
+                        var posy = 200 * (border.bottom + reader.getInt32()) / j;
                         var size = reader.getUint16() / (k / 200);
                         var color = "";
                         for (var r = reader.getUint8(), g = reader.getUint8(), b = reader.getUint8(), color = (r << 16 | g << 8 | b).toString(16); 6 > color.length;) color = "0" + color;
                         color = "#" + color;
                         var tossaway = reader.getUint8();
                         tossaway = reader.getUint16();
-                        if(size < 1.8) size = 1.8;
+                        if (size < 1.8) size = 1.8;
                         mCtx.beginPath();
                         mCtx.arc(posx, posy, size, 0, PI_2, false);
                         mCtx.strokeStyle = "#000000";
@@ -413,7 +415,7 @@ $(function () {
                 break;
             default:
                 log.err("Got unexpected packet ID " + packet)
-                Disconnect();
+            // Disconnect();
         }
     };
     function WsError(e) {
@@ -423,7 +425,7 @@ $(function () {
     function WsClose() {
         log.debug("Disconnected");
         Disconnect();
-        setTimeout(function() {
+        setTimeout(function () {
             if (ws) if (ws.readyState === 1) return;
             Connect(CONNECT_TO);
         }, (disconnectDelay *= 1.5) * 1000);
@@ -436,10 +438,10 @@ $(function () {
     };
     function Play(name) {
         // check if skin field is filled!
-        stats = {virus: 0, pellet: 0, cells: 0, players: 0, score: 0 };
+        stats = { virus: 0, pellet: 0, cells: 0, players: 0, score: 0 };
         var skin = $('#myskin').val();
         userName = name;
-        if(skin != "") name = '<' + skin + '>' + name;
+        if (skin != "") name = '<' + skin + '>' + name;
         log.debug("Playing");
         var writer = new Writer(true);
         writer.setUint8(0x00);
@@ -499,41 +501,41 @@ $(function () {
         nodepred = nodesID[predator];
 
         if (-1 != myNodes.indexOf(predator)) {
-            if(nodeprey.isPellet)
+            if (nodeprey.isPellet)
                 stats.pellet++;
-            else if(nodeprey.isVirus)
+            else if (nodeprey.isVirus)
                 stats.virus++;
-            else if(nodeprey.name == 0)
+            else if (nodeprey.name == 0)
                 stats.cells++;
             else {
                 // You eat a player!
                 stats.players++;
                 eats = true;
             }
-        } else if(nodeprey.name != 0 && nodepred.name != 0) {
+        } else if (nodeprey.name != 0 && nodepred.name != 0) {
             // predator.name eats prey.name!
             eats = true;
         }
 
-        if(eats && settings.showkills) {
-            battlelog.push( { "data": "<strong style='color:" + nodepred.color + "'>" + htmlspecialchars(nodepred.name) + "</strong> eats <strong style='color:" + nodeprey.color + "'>" + htmlspecialchars(nodeprey.name) + "</strong> (" + Math.floor((nodeprey.size * nodeprey.size)/100) + " mass)" } );
-            if(battlelog.length > 12) battlelog.shift();
+        if (eats && settings.showkills) {
+            battlelog.push({ "data": "<strong style='color:" + nodepred.color + "'>" + htmlspecialchars(nodepred.name) + "</strong> eats <strong style='color:" + nodeprey.color + "'>" + htmlspecialchars(nodeprey.name) + "</strong> (" + Math.floor((nodeprey.size * nodeprey.size) / 100) + " mass)" });
+            if (battlelog.length > 12) battlelog.shift();
             var temp = '', i, k = battlelog.length;
-            if (k > 0 ) {
+            if (k > 0) {
                 var livekills = document.getElementById("livekills");
                 for (i = 0; i < k; ++i) {
-                    if(typeof(battlelog[i].data) != 'undefined') temp += battlelog[i].data + "<br>";
+                    if (typeof (battlelog[i].data) != 'undefined') temp += battlelog[i].data + "<br>";
                 }
-                $(livekills).html( temp );
+                $(livekills).html(temp);
             }
         }
     };
     function htmlspecialchars(html) {
-      html = html.replace("/&/g", "&amp;");
-      html = html.replace("/</g", "&lt;");
-      html = html.replace("/>/g", "&gt;");
-      html = html.replace("/\"/g", "&quot;");
-      return html;
+        html = html.replace("/&/g", "&amp;");
+        html = html.replace("/</g", "&lt;");
+        html = html.replace("/>/g", "&gt;");
+        html = html.replace("/\"/g", "&quot;");
+        return html;
     };
     function SendChat(a) {
         if (a.length > 200) {
@@ -599,6 +601,7 @@ $(function () {
         writer.setStringUTF8(a);
         WsSend(writer);
     };
+    window.sendChat = SendChat;
     function SendMouseMove(x, y) {
         var writer = new Writer(true);
         writer.setUint8(0x10);
@@ -609,7 +612,7 @@ $(function () {
     };
 
     // Game variables
-    var nodesID = { },
+    var nodesID = {},
         nodes = [],
         deadNodes = [],
         myNodes = [],
@@ -641,7 +644,7 @@ $(function () {
         // Red Green Blue Yellow Cyan Magenta Orange
         teamColors = ["#FF3333", "#33FF33", "#3333FF", "#FFFF33", "#33FFFF", "#FF33FF", "#FF8833"],
         gameType = -1; // Given at SetBorder packet
-        serverVersion = "Unknown", // Given at SetBorder packet
+    serverVersion = "Unknown", // Given at SetBorder packet
         chatText = "",
         chatMessages = [],
         chatAlphaWait = 0,
@@ -666,12 +669,12 @@ $(function () {
         splitIcon = new Image,
         ejectIcon = new Image,
         gamestart = null,
-        stats = {virus: 0, pellet: 0, cells: 0, players: 0, score: 0},
-        pressed = {space: false, w: false, e: false, r: false, t: false, p: false, q: false, esc: false};
+        stats = { virus: 0, pellet: 0, cells: 0, players: 0, score: 0 },
+        pressed = { space: false, w: false, e: false, r: false, t: false, p: false, q: false, esc: false };
 
-    for(var o=0; o<720; o+=2) {
-        cachedFoodPos[o] = Math.cos((o*Math.PI)/180)*10;
-        cachedFoodPos[o+1] = Math.sin((o*Math.PI)/180)*10;
+    for (var o = 0; o < 720; o += 2) {
+        cachedFoodPos[o] = Math.cos((o * Math.PI) / 180) * 10;
+        cachedFoodPos[o + 1] = Math.sin((o * Math.PI) / 180) * 10;
     }
     splitIcon.src = "img/split.png";
     ejectIcon.src = "img/feed.png";
@@ -679,7 +682,7 @@ $(function () {
     // Render quality settings
     var qualitySettings = {
         'retina': {
-            getTextLineWidth: function(a) {
+            getTextLineWidth: function (a) {
                 return a * .1;
             },
             cellOutline: true,
@@ -691,7 +694,7 @@ $(function () {
             smoothquality: 'high'
         },
         'high': {
-            getTextLineWidth: function(a) {
+            getTextLineWidth: function (a) {
                 return a * .1;
             },
             cellOutline: true,
@@ -703,7 +706,7 @@ $(function () {
             smoothquality: 'high'
         },
         'medium': {
-            getTextLineWidth: function(a) {
+            getTextLineWidth: function (a) {
                 return a * .1;
             },
             cellOutline: false,
@@ -715,7 +718,7 @@ $(function () {
             smoothquality: 'medium'
         },
         'low': {
-            getTextLineWidth: function(a) {
+            getTextLineWidth: function (a) {
                 return 3.1;
             },
             cellOutline: false,
@@ -727,7 +730,7 @@ $(function () {
             smoothquality: 'low'
         },
         'mobile': {
-            getTextLineWidth: function(a) {
+            getTextLineWidth: function (a) {
                 return 0;
             },
             cellOutline: false,
@@ -764,62 +767,62 @@ $(function () {
 
     // Load local storage
     if (null != wHandle.localStorage) {
-        wjQuery(window).load(function() {
-            wjQuery(".save").each(function() {
+        wjQuery(window).load(function () {
+            wjQuery(".save").each(function () {
                 var id = $(this).data("box-id");
                 var value = wHandle.localStorage.getItem("checkbox-" + id);
                 if (value && value == "true" && (0 != id || 50 != id || 20 != id)) {
                     $(this).prop("checked", "true");
                     $(this).trigger("change");
                 } else if ((id == 0 || id == 50 || id == 20) && value != null) {
-                    if(id == 50) {
+                    if (id == 50) {
                         $('div#myviewskin').css('background-image', 'url("' + SKIN_URL + value + '.png")');
                         $('div#myviewskin').fadeIn(1350);
                     }
                     $(this).val(value);
-                    if(id == 20) applysettings(value);
+                    if (id == 20) applysettings(value);
                 } else if (value == null) {
                     // Set Defaults
-                    if(id == 1)  { wHandle.localStorage.setItem("checkbox-1",  false); } // No Skins
-                    if(id == 2)  { wHandle.localStorage.setItem("checkbox-2",  false); } // No Names
-                    if(id == 3)  { wHandle.localStorage.setItem("checkbox-3",  true ); $(this).prop("checked", "true"); } // Dark Theme
-                    if(id == 4)  { wHandle.localStorage.setItem("checkbox-4",  false); } // No Colors
-                    if(id == 5)  { wHandle.localStorage.setItem("checkbox-5",  true ); $(this).prop("checked", "true"); } // Show Chat
-                    if(id == 6)  { wHandle.localStorage.setItem("checkbox-6",  true ); $(this).prop("checked", "true"); } // Smooth Render
-                    if(id == 7)  { wHandle.localStorage.setItem("checkbox-7",  true ); $(this).prop("checked", "true"); } // Border
-                    if(id == 8)  { wHandle.localStorage.setItem("checkbox-8",  true ); $(this).prop("checked", "true"); } // Map Grid
-                    if(id == 9)  { wHandle.localStorage.setItem("checkbox-9",  true ); $(this).prop("checked", "true"); } // Kill Info
-                    if(id == 10) { wHandle.localStorage.setItem("checkbox-10", true ); $(this).prop("checked", "true"); } // Alpha
-                    if(id == 11) { wHandle.localStorage.setItem("checkbox-11", true ); $(this).prop("checked", "true"); } // Mini Map
-                    if(id == 20) { wHandle.localStorage.setItem("checkbox-20", 3); }
+                    if (id == 1) { wHandle.localStorage.setItem("checkbox-1", false); } // No Skins
+                    if (id == 2) { wHandle.localStorage.setItem("checkbox-2", false); } // No Names
+                    if (id == 3) { wHandle.localStorage.setItem("checkbox-3", true); $(this).prop("checked", "true"); } // Dark Theme
+                    if (id == 4) { wHandle.localStorage.setItem("checkbox-4", false); } // No Colors
+                    if (id == 5) { wHandle.localStorage.setItem("checkbox-5", true); $(this).prop("checked", "true"); } // Show Chat
+                    if (id == 6) { wHandle.localStorage.setItem("checkbox-6", true); $(this).prop("checked", "true"); } // Smooth Render
+                    if (id == 7) { wHandle.localStorage.setItem("checkbox-7", true); $(this).prop("checked", "true"); } // Border
+                    if (id == 8) { wHandle.localStorage.setItem("checkbox-8", true); $(this).prop("checked", "true"); } // Map Grid
+                    if (id == 9) { wHandle.localStorage.setItem("checkbox-9", true); $(this).prop("checked", "true"); } // Kill Info
+                    if (id == 10) { wHandle.localStorage.setItem("checkbox-10", true); $(this).prop("checked", "true"); } // Alpha
+                    if (id == 11) { wHandle.localStorage.setItem("checkbox-11", true); $(this).prop("checked", "true"); } // Mini Map
+                    if (id == 20) { wHandle.localStorage.setItem("checkbox-20", 3); }
                 }
             });
-            wjQuery(".save").change(function() {
+            wjQuery(".save").change(function () {
                 var id = $(this).data('box-id');
                 var value = (id == 0 || id == 50 || id == 20) ? $(this).val() : $(this).prop('checked');
                 wHandle.localStorage.setItem("checkbox-" + id, value);
             });
         });
     };
-/*
-    // Load known skin list
-    wjQuery.ajax({
-        type: "POST",
-        dataType: "json",
-        url: "checkdir.php",
-        data: {
-            "action": "getSkins"
-        },
-        success: function(data) {
-            response = JSON.parse(data.names);
-            for (var i = 0; i < response.length; i++) {
-                if (-1 === knownSkins.indexOf(response[i])) {
-                    knownSkins.push(response[i]);
+    /*
+        // Load known skin list
+        wjQuery.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "checkdir.php",
+            data: {
+                "action": "getSkins"
+            },
+            success: function(data) {
+                response = JSON.parse(data.names);
+                for (var i = 0; i < response.length; i++) {
+                    if (-1 === knownSkins.indexOf(response[i])) {
+                        knownSkins.push(response[i]);
+                    }
                 }
             }
-        }
-    });
-*/
+        });
+    */
     function hideESCOverlay() {
         escOverlay = false;
         wjQuery("#overlays").hide();
@@ -852,19 +855,19 @@ $(function () {
 
         // Mouse wheel
         if (/firefox/i.test(navigator.userAgent))
-            document.addEventListener("DOMMouseScroll", handleWheel, false);
+            document.querySelector("#canvas").addEventListener("DOMMouseScroll", handleWheel, false);
         else
-            document.body.onmousewheel = handleWheel;
+            document.querySelector("#canvas").onmousewheel = handleWheel;
 
-        window.onfocus = function() {
+        window.onfocus = function () {
             isWindowFocused = true;
         };
 
-        window.onblur = function() {
+        window.onblur = function () {
             isWindowFocused = false;
         };
 
-        wHandle.onkeydown = function(event) {
+        wHandle.onkeydown = function (event) {
             switch (event.keyCode) {
                 case 13: // enter
                     if (escOverlay) break;
@@ -920,7 +923,7 @@ $(function () {
             }
         };
 
-        wHandle.onkeyup = function(event) {
+        wHandle.onkeyup = function (event) {
             switch (event.keyCode) {
                 case 32: // space
                     pressed.space = false;
@@ -950,29 +953,29 @@ $(function () {
             }
         };
 
-        chatBox.onblur = function() {
+        chatBox.onblur = function () {
             isTyping = false;
             drawChat();
         };
 
-        chatBox.onfocus = function() {
+        chatBox.onfocus = function () {
             isTyping = true;
             drawChat();
         };
 
-        mainCanvas.onmousemove = function(event) {
+        mainCanvas.onmousemove = function (event) {
             rawMouseX = event.clientX;
             rawMouseY = event.clientY;
         };
 
-        setInterval(function() {
+        setInterval(function () {
             // Mouse update
             SendMouseMove((rawMouseX - mainCanvas.width / 2) / drawZoom + centerX,
                 (rawMouseY - mainCanvas.height / 2) / drawZoom + centerY);
         }, 40);
 
-        wHandle.onresize = function() {
-            window.scrollTo(0,0);
+        wHandle.onresize = function () {
+            window.scrollTo(0, 0);
             var cW = mainCanvas.width = wHandle.innerWidth,
                 cH = mainCanvas.height = wHandle.innerHeight;
             _viewMult = Math.min(cH / 1080, cW / 1920);
@@ -987,7 +990,7 @@ $(function () {
         wHandle.onresize();
         showESCOverlay();
 
-        log.info("Loaded, took " + (Date.now() - LOAD_START) + " ms");
+        console.info("Loaded, took " + (Date.now() - LOAD_START) + " ms");
 
         if (window.requestAnimationFrame)
             window.requestAnimationFrame(drawLoop);
@@ -1004,29 +1007,29 @@ $(function () {
     };
     function drawTouch() {
         mainCtx.save();
-        for(var i=0; i<touches.length; i++) {
+        for (var i = 0; i < touches.length; i++) {
             var touch = touches[i];
-            if(touch.identifier == leftTouchID){
+            if (touch.identifier == leftTouchID) {
                 mainCtx.beginPath();
                 mainCtx.strokeStyle = "#0096ff";
                 mainCtx.lineWidth = 6;
-                mainCtx.arc(leftTouchStartPos.x, leftTouchStartPos.y, 40,0,Math.PI*2,true);
+                mainCtx.arc(leftTouchStartPos.x, leftTouchStartPos.y, 40, 0, Math.PI * 2, true);
                 mainCtx.stroke();
                 mainCtx.beginPath();
                 mainCtx.strokeStyle = "#0096ff";
                 mainCtx.lineWidth = 2;
-                mainCtx.arc(leftTouchStartPos.x, leftTouchStartPos.y, 60,0,Math.PI*2,true);
+                mainCtx.arc(leftTouchStartPos.x, leftTouchStartPos.y, 60, 0, Math.PI * 2, true);
                 mainCtx.stroke();
                 mainCtx.beginPath();
                 mainCtx.strokeStyle = "#0096ff";
-                mainCtx.arc(leftTouchPos.x, leftTouchPos.y, 40, 0,Math.PI*2, true);
+                mainCtx.arc(leftTouchPos.x, leftTouchPos.y, 40, 0, Math.PI * 2, true);
                 mainCtx.stroke();
             } else {
                 mainCtx.beginPath();
                 mainCtx.beginPath();
                 mainCtx.strokeStyle = "#0096ff";
                 mainCtx.lineWidth = "6";
-                mainCtx.arc(touch.clientX, touch.clientY, 40, 0, Math.PI*2, true);
+                mainCtx.arc(touch.clientX, touch.clientY, 40, 0, Math.PI * 2, true);
                 mainCtx.stroke();
             }
         }
@@ -1053,9 +1056,9 @@ $(function () {
         while ((l = chatMessages.length) > 15) chatMessages.shift(); // Remove older messages
         l = chatMessages.length;
 
-        for ( ; i < l; i++) {
+        for (; i < l; i++) {
             msg = chatMessages[i];
-            ctx.font = '14px Ubuntu';
+            ctx.font = '14px ManropeExtraBold';
             aW = Math.max(aW, 16 + ctx.measureText(msg.name + ":").width + ctx.measureText(" " + msg.message).width);
         }
 
@@ -1070,19 +1073,19 @@ $(function () {
             msg = chatMessages[i];
 
             var divider = ":";
-            if(msg.server) { msg.name = "\uD83D\uDCE2"; msg.nameColor = "#770000"; divider = ""; }
-            if(msg.admin) { msg.name = "\uD83D\uDD75"; msg.nameColor = "#7D7D7D"; divider = ""; }
+            if (msg.server) { msg.name = "\uD83D\uDCE2"; msg.nameColor = "#770000"; divider = ""; }
+            if (msg.admin) { msg.name = "\uD83D\uDD75"; msg.nameColor = "#7D7D7D"; divider = ""; }
 
             // Name
             ctx.fillStyle = msg.nameColor;
-            ctx.font = '14px Ubuntu';
+            ctx.font = '14px ManropeExtraBold';
             fW = ctx.measureText(msg.name + divider).width;
-            ctx.font = '14px Ubuntu';
+            ctx.font = '14px ManropeExtraBold';
             ctx.fillText(msg.name + divider, 10, 5 + 18 * (i + 1));
 
             // Message
-            ctx.font = '14px Ubuntu';
-            if(!msg.server) ctx.fillStyle = "#FFFFFF";
+            ctx.font = '14px ManropeExtraBold';
+            if (!msg.server) ctx.fillStyle = "#FFFFFF";
             ctx.fillText(" " + msg.message, 10 + fW, 5 + 18 * (i + 1));
         }
     };
@@ -1095,7 +1098,7 @@ $(function () {
         if (!serverStatCanvas) serverStatCanvas = document.createElement('canvas');
         var ctx = serverStatCanvas.getContext('2d'), a, b, c;
 
-        ctx.font = '16px Ubuntu';
+        ctx.font = '16px ManropeExtraBold';
         serverStatCanvas.width = 4 + Math.max(
             ctx.measureText(serverStats.name).width,
             ctx.measureText(serverStats.mode).width,
@@ -1105,7 +1108,7 @@ $(function () {
         );
         serverStatCanvas.height = 196;
 
-        ctx.font = '16px Ubuntu';
+        ctx.font = '16px ManropeExtraBold';
         ctx.fillStyle = settings.darkTheme ? "#AAAAAA" : "#000000";
         ctx.globalAlpha = 1;
         var ix = 30;
@@ -1126,7 +1129,7 @@ $(function () {
 
         var ctx = leaderboardCanvas.getContext('2d'),
             l = leaderboard.length;
-            width = leaderboardType !== 50 ? 60 + 24 * l : 240,
+        width = leaderboardType !== 50 ? 60 + 24 * l : 240,
             i = 0;
 
         leaderboardCanvas.width = 200;
@@ -1138,14 +1141,14 @@ $(function () {
 
         ctx.globalAlpha = 1;
         ctx.fillStyle = "#428BCA";
-        ctx.font = "30px Ubuntu";
+        ctx.font = "30px ManropeExtraBold";
         ctx.fillText("Leaderboard", 100 - ctx.measureText("Leaderboard").width / 2, 40);
 
         if (leaderboardType === 0x32) {
             // Pie chart
             ctx.beginPath();
             var last = 0;
-            for ( ; i < l; i++) {
+            for (; i < l; i++) {
                 ctx.fillStyle = teamColors[i];
                 ctx.moveTo(100, 140);
                 ctx.arc(100, 140, 80, last, (last += leaderboard[i] * PI_2), false);
@@ -1154,15 +1157,15 @@ $(function () {
             ctx.closePath();
         } else {
             // Text-based
-            var o, me = false, w, start,colors = ['#FF5656','#EC6856','#D97B56','#C68E56','#B3A156','#A1B356','#8EC656','#7BD956','#68EC56','#56FF56','#66FF66','#77FF77','#88FF88','#99FF99','#AAFFAA','#BBFFBB','#CCFFCC','#DDFFDD','#EEFFEE','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF','#FFFFFF'];
-            ctx.font = "20px Ubuntu";
-            for ( ; i < l; i++) {
+            var o, me = false, w, start, colors = ['#FF5656', '#EC6856', '#D97B56', '#C68E56', '#B3A156', '#A1B356', '#8EC656', '#7BD956', '#68EC56', '#56FF56', '#66FF66', '#77FF77', '#88FF88', '#99FF99', '#AAFFAA', '#BBFFBB', '#CCFFCC', '#DDFFDD', '#EEFFEE', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'];
+            ctx.font = "20px ManropeExtraBold";
+            for (; i < l; i++) {
                 o = leaderboard[i];
                 if (leaderboardType === 0x31) {
                     me = o.me;
                     o = o.name;
                 }
-                if ( me == 4294967295 ) {
+                if (me == 4294967295) {
                     ctx.fillStyle = '#428BCA';
                     var start = -20;
                     ctx.fillText(o, start, 75 + 24 * i);
@@ -1177,12 +1180,12 @@ $(function () {
     };
     function drawSplitIcon() {
         if (splitIcon.width) {
-            var size = ~~ (mainCanvas.width / 7);
+            var size = ~~(mainCanvas.width / 7);
             mainCtx.drawImage(splitIcon, mainCanvas.width - size, mainCanvas.height - size, size, size);
         }
         if (splitIcon.width) {
-            var size = ~~ (mainCanvas.width / 7);
-            mainCtx.drawImage(ejectIcon, mainCanvas.width - size, mainCanvas.height - 2*size-10, size, size);
+            var size = ~~(mainCanvas.width / 7);
+            mainCtx.drawImage(ejectIcon, mainCanvas.width - size, mainCanvas.height - 2 * size - 10, size, size);
         }
     };
     function drawGrid() {
@@ -1190,7 +1193,7 @@ $(function () {
         mainCtx.strokeStyle = settings.darkTheme ? "#AAAAAA" : "#000000";
         mainCtx.globalAlpha = .2;
         var step = 50
-            cW = mainCanvas.width / drawZoom, cH = mainCanvas.height / drawZoom,
+        cW = mainCanvas.width / drawZoom, cH = mainCanvas.height / drawZoom,
             startLeft = (-centerX + cW * .5) % step,
             startTop = (-centerY + cH * .5) % step,
             i = startLeft;
@@ -1198,7 +1201,7 @@ $(function () {
         mainCtx.scale(drawZoom, drawZoom);
 
         // Left -> Right
-        for ( ; i < cW; i += step) {
+        for (; i < cW; i += step) {
             mainCtx.moveTo(i, -.5);
             mainCtx.lineTo(i, cH);
         }
@@ -1213,28 +1216,28 @@ $(function () {
     };
     function mapgrid() {
         var gridl = Math.round(border.left) + 40
-          , gridt = Math.round(border.top) + 40
-          , gridc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'['split']('')
-          , gridr = (Math.round(border.right) - 40 - gridl) / 5
-          , gridb = (Math.round(border.bottom) - 40 - gridt) / 5;
+            , gridt = Math.round(border.top) + 40
+            , gridc = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'['split']('')
+            , gridr = (Math.round(border.right) - 40 - gridl) / 5
+            , gridb = (Math.round(border.bottom) - 40 - gridt) / 5;
 
         mainCtx.save();
         mainCtx.beginPath();
         mainCtx.globalAlpha = 0.2;
         mainCtx.textAlign = 'center';
         mainCtx.textBaseline = 'middle';
-        mainCtx.font = 0.6 * gridr + 'px Ubuntu';
+        mainCtx.font = 0.6 * gridr + 'px ManropeExtraBold';
         mainCtx.fillStyle = '#428BCA';
-        for(var i = 0; 5 > i; i++) {
-            for(var n = 0; 5 > n; n++) {
+        for (var i = 0; 5 > i; i++) {
+            for (var n = 0; 5 > n; n++) {
                 mainCtx.fillText(gridc[i] + (n + 1), gridl + gridr * n + gridr / 2, gridt + gridb * i + gridb / 2)
             }
         };
         mainCtx.globalAlpha = 1.0;
         mainCtx.lineWidth = 80;
         mainCtx.strokeStyle = settings.darkTheme ? "#1A1A1A" : "#EAEAEA";
-        for(i = 0; 5 > i; i++) {
-            for(n = 0; 5 > n; n++) {
+        for (i = 0; 5 > i; i++) {
+            for (n = 0; 5 > n; n++) {
                 mainCtx.strokeRect(gridl + gridr * n, gridt + gridb * i, gridr, gridb)
             }
         };
@@ -1293,15 +1296,15 @@ $(function () {
 
         // Border
         if (settings.showBorder) {
-            mainCtx.strokeStyle = '#FF0000';
-            mainCtx.lineWidth = 5;
+            mainCtx.strokeStyle = '#3b82f6';
+            mainCtx.lineWidth = 10;
             mainCtx.lineCap = "round";
             mainCtx.lineJoin = "round";
             mainCtx.beginPath();
-            mainCtx.moveTo(border.left,border.top);
-            mainCtx.lineTo(border.right,border.top);
-            mainCtx.lineTo(border.right,border.bottom);
-            mainCtx.lineTo(border.left,border.bottom);
+            mainCtx.moveTo(border.left, border.top);
+            mainCtx.lineTo(border.right, border.top);
+            mainCtx.lineTo(border.right, border.bottom);
+            mainCtx.lineTo(border.left, border.bottom);
             mainCtx.closePath();
             mainCtx.stroke();
         }
@@ -1332,14 +1335,14 @@ $(function () {
         mainCtx.fillStyle = settings.darkTheme ? "#FFFFFF" : "#000000";
         if (userScore > 0) {
             var scoreSize = 48 * viewMult;
-            mainCtx.font = ~~scoreSize + "px Ubuntu";
+            mainCtx.font = ~~scoreSize + "px ManropeExtraBold";
             mainCtx.fillText("Score: " + userScore, 4, 36 * viewMult);
-            mainCtx.font = ~~topSize/2 + "px Ubuntu";
+            mainCtx.font = ~~topSize / 2 + "px ManropeExtraBold";
             mainCtx.fillText(topText, 4, 58 * viewMult);
             mainCtx.fillText(PosText, 4, 84 * viewMult);
             settings.qualityRef.drawStat && serverStatCanvas && mainCtx.drawImage(serverStatCanvas, 2, 60 * viewMult);
         } else {
-            mainCtx.font = ~~topSize + "px Ubuntu";
+            mainCtx.font = ~~topSize + "px ManropeExtraBold";
             mainCtx.fillText(topText, 4, 36 * viewMult);
             settings.qualityRef.drawStat && serverStatCanvas && mainCtx.drawImage(serverStatCanvas, 2, 24 * viewMult);
         }
@@ -1353,7 +1356,7 @@ $(function () {
         chatCanvas && mainCtx.drawImage(chatCanvas, 2, (cH - 40) - chatCanvas.height);
 
         // Draw touches
-        if(settings.mobile) {
+        if (settings.mobile) {
             drawTouch();
             drawSplitIcon();
         }
@@ -1385,7 +1388,7 @@ $(function () {
             //console.log(rl, ncX, ncY);
             if (rl > 0) {
                 userScore = Math.max(newScore, userScore);
-                if(userScore > stats.score) stats.score = userScore;
+                if (userScore > stats.score) stats.score = userScore;
                 ncX /= rl;
                 ncY /= rl;
                 centerX += (~~ncX - centerX) * .4;
@@ -1457,7 +1460,7 @@ $(function () {
         _meCache: null, // If it's a pellet it'll draw from this cache
         _meW: null,
         _meH: null,
-        updateAppearance: function(time, dt) {
+        updateAppearance: function (time, dt) {
             if (this.destroyed)
                 if (time - this.deathStamp > 200 || !this.killer || this.size < 4) {
                     // Fully remove
@@ -1475,7 +1478,7 @@ $(function () {
             this._nameSize = Math.max(~~(0.3 * this.nSize), 24);
 
         },
-        setName: function(name) {
+        setName: function (name) {
             var reg = /\{([\w]+)\}/.exec(name);
             if (reg) if (reg.length === 2) {
                 this.nameSkin = reg[1].toLowerCase();
@@ -1484,10 +1487,10 @@ $(function () {
             }
             this.name = name;
         },
-        setSkin: function(skin) {
+        setSkin: function (skin) {
             this.skin = skin[0] == "%" ? skin.replace("%", "") : skin;
         },
-        setColor: function(color) {
+        setColor: function (color) {
             this.color = color;
             var r = (~~(parseInt(color.substr(1, 2), 16) * 0.9)).toString(16),
                 g = (~~(parseInt(color.substr(3, 2), 16) * 0.9)).toString(16),
@@ -1497,7 +1500,7 @@ $(function () {
             if (b.length == 1) b = "0" + b;
             this.strokeColor = "#" + r + g + b;
         },
-        destroy: function(time) {
+        destroy: function (time) {
             delete nodesID[this.id];
             var i;
             ((i = nodes.indexOf(this)) !== -1) && nodes.splice(i, 1);
@@ -1513,10 +1516,10 @@ $(function () {
             this.deathStamp = time;
             this.destroyed = true;
         },
-        updatePoints: function(animated, jagged, dt) {
+        updatePoints: function (animated, jagged, dt) {
             // Update points
-            var pointAmount = this.size,
-                minPointAmount = jagged ? 90 : (this.isPellet ? 8 : 16),
+            var pointAmount = jagged ? 35 : this.size,
+                minPointAmount = jagged ? 35 : (this.isPellet ? 8 : 16),
                 x = this.x,
                 y = this.y,
                 maxSizeRemove = this.size * .16,
@@ -1527,9 +1530,11 @@ $(function () {
             pointAmount = Math.max(~~pointAmount, minPointAmount);
             jagged && (pointAmount = ~~(pointAmount * .5) * 2);
 
+            // if (jagged) console.debug(pointAmount)
+
             step = PI_2 / pointAmount;
             var newPoints = [];
-            for ( ; i < pointAmount; i++) {
+            for (; i < pointAmount; i++) {
                 var nDiff;
                 if (this.rigidPoints[i] && animated) {
                     // Animate the point
@@ -1576,16 +1581,16 @@ $(function () {
 
             this.rigidPoints = newPoints;
         },
-        draw: function(time) {
+        draw: function (time) {
             var dt = Math.min(Math.max((time - this.appStamp) / 120, 0), 1);
             this.appStamp = time;
 
             mainCtx.save();
-            mainCtx.imageSmoothingEnabled=settings.qualityRef.smoothRender > 0.6 ? 0 : 1;
+            mainCtx.imageSmoothingEnabled = settings.qualityRef.smoothRender > 0.6 ? 0 : 1;
             mainCtx.imageSmoothingQuality = settings.qualityRef.smoothquality;
 
-            if(this.isAgitated && settings.qualityRef.smoothRender < 0.5)
-                this.drawVirus(this.x,this.y,0.75,( time / 640 ),0);
+            if (this.isAgitated && settings.qualityRef.smoothRender < 0.5)
+                this.drawVirus(this.x, this.y, 0.75, (time / 640), 0);
             else
                 this.drawShape(dt);
 
@@ -1601,7 +1606,7 @@ $(function () {
                     var idx1 = name.indexOf('['),
                         idx2 = 1 + name.indexOf(']'),
                         clan = name.substring(idx1 + 1, idx2 - 1);
-                    if ( idx1 == 0 )
+                    if (idx1 == 0)
                         name = name.substring(idx2);
                     else
                         name = name.substring(0, idx1);
@@ -1610,7 +1615,7 @@ $(function () {
                     name = name.trim();
                 }
 
-                if(this.colord == null) this.colord = ColorLuminance(this.color, 0.2);
+                if (this.colord == null) this.colord = ColorLuminance(this.color, 0.2);
 
                 if (nameDraw) {
                     drawText(this.x, this.y, name, this._nameSize, false, this.color);
@@ -1629,50 +1634,50 @@ $(function () {
                 mainCtx.restore();
             }
         },
-        drawVirus: function(x,y,s,r,k) {
+        drawVirus: function (x, y, s, r, k) {
             // Pretty wirly thingy for surprice cells :3 (only if quility is high or higher)
             var ban = 0;
-            var a,b,c,px,py,r1,r2,han;
-            han=30;
-            if(k>2) {
-                a=(k*5+200)%360;
+            var a, b, c, px, py, r1, r2, han;
+            han = 30;
+            if (k > 2) {
+                a = (k * 5 + 200) % 360;
                 mainCtx.globalCompositeOperation = "lighter";
-                mainCtx.fillStyle="hsla("+a+",60%,50%,0.1)";
+                mainCtx.fillStyle = "hsla(" + a + ",60%,50%,0.1)";
                 mainCtx.beginPath();
-                mainCtx.arc(x,y,han*s*2,0,Math.PI*2,0);
+                mainCtx.arc(x, y, han * s * 2, 0, Math.PI * 2, 0);
                 mainCtx.fill();
                 mainCtx.globalCompositeOperation = "source-over";
-                mainCtx.fillStyle="hsl("+a+",60%,30%)";
+                mainCtx.fillStyle = "hsl(" + a + ",60%,30%)";
                 mainCtx.beginPath();
-                mainCtx.arc(x,y,han*s,0,Math.PI*2,0);
+                mainCtx.arc(x, y, han * s, 0, Math.PI * 2, 0);
                 mainCtx.fill();
             }
             ban++;
-            if(s<0.3)return;
+            if (s < 0.3) return;
             k++;
-            r1=0.87;
-            r2=1-r1;
-            r+=ban;
-            px=Math.cos(r);
-            py=Math.sin(r);
-            this.drawVirus(x+px*han*r2*s,y+py*han*r2*s,s*r1,r*1.2,k);
-            r+=ban;
-            px=Math.cos(r);
-            py=Math.sin(r);
-            r1=0.82;
-            this.drawVirus(x+px*han*(1+r1)*s,y+py*han*(1+r1)*s,s*r1,-r,k);
+            r1 = 0.87;
+            r2 = 1 - r1;
+            r += ban;
+            px = Math.cos(r);
+            py = Math.sin(r);
+            this.drawVirus(x + px * han * r2 * s, y + py * han * r2 * s, s * r1, r * 1.2, k);
+            r += ban;
+            px = Math.cos(r);
+            py = Math.sin(r);
+            r1 = 0.82;
+            this.drawVirus(x + px * han * (1 + r1) * s, y + py * han * (1 + r1) * s, s * r1, -r, k);
         },
-        drawShape: function(dt) {
+        drawShape: function (dt) {
             var complex = this.wasComplexDrawing = settings.fastRenderMax <= drawZoom,
                 jagged = this.isVirus,
-                fill = mainCtx.createRadialGradient(this.x,this.y,0,this.x,this.y,this.size);
+                fill = mainCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
 
             mainCtx.lineWidth = settings.qualityRef.cellOutline ? (this.isEjected ? 0 : this.size > 20 ? Math.max(this.size * .05, 10) : 0) : 0;
             mainCtx.lineCap = "round";
             mainCtx.lineJoin = jagged ? "miter" : "round";
 
             fill.addColorStop(0, 'rgba(0,0,0,0.6)');
-            if(settings.RenderAlpha) {
+            if (settings.RenderAlpha) {
                 settings.darkTheme ? mainCtx.globalCompositeOperation = "lighter" : mainCtx.globalCompositeOperation = "darker";
                 fill.addColorStop(0, 'rgba(0,0,0,0.4)');
             }
@@ -1709,15 +1714,14 @@ $(function () {
                 mainCtx.closePath();
             } else {
                 this.rigidPoints = [];
-                if (this._meCache)
-                {
+                if (this._meCache) {
                     // Cached drawing exists - use it
-                    if(this.isPellet && settings.qualityRef.smoothRender < 1.0) {
-                        if (typeof(this.loop)=='undefined') {
+                    if (this.isPellet && settings.qualityRef.smoothRender < 1.0) {
+                        if (typeof (this.loop) == 'undefined') {
                             // Lets wirl the food a little in an circle motion
                             this.sp = 3 - Math.ceil(this.size / 10);
                             this.ratio = (1 + Math.random()) * (Math.random() * 2 > 1 ? 1 : -1);
-                            this.loop=Math.floor(Math.random() * 360);
+                            this.loop = Math.floor(Math.random() * 360);
                         }
                         this.loop = (this.loop + this.sp) % 360;
                         mainCtx.drawImage(this._meCache, (this.x - (this.size * 2)) + (cachedFoodPos[this.loop * 2] * this.ratio), (this.y - (this.size * 2)) + (cachedFoodPos[(this.loop * 2) + 1] * (Math.abs(this.ratio))));
@@ -1727,18 +1731,18 @@ $(function () {
                     mainCtx.arc(this.x, this.y, Math.abs(this.size - mainCtx.lineWidth * 0.5) + 0.5, 0, PI_2, false);
                     mainCtx.fill();
                     settings.qualityRef.cellOutline && mainCtx.stroke();
-                    if(!this.isPellet) this.drawSkin();
+                    if (!this.isPellet) this.drawSkin();
                     mainCtx.closePath();
                 }
             }
         },
-        drawSkin: function() {
+        drawSkin: function () {
             if (settings.qualityRef.overrideSkins) return;
 
             var skin = this.skin || this.nameSkin;
 
             if (settings.showSkins && skin != '') { // && -1 !== knownSkins.indexOf(skin)) {
-                if (skin[0] == '%')skin = skin.substring(1);
+                if (skin[0] == '%') skin = skin.substring(1);
                 if (!loadedSkins.hasOwnProperty(skin)) {
                     // Download skin
                     loadedSkins[skin] = new Image;
@@ -1749,7 +1753,7 @@ $(function () {
                     loadedSkins[skin].accessTime = Date.now();
                     mainCtx.save();
 
-                    if(settings.RenderAlpha) mainCtx.globalAlpha=0.8;
+                    if (settings.RenderAlpha) mainCtx.globalAlpha = 0.8;
                     mainCtx.clip();
                     mainCtx.drawImage(loadedSkins[skin], this.x - this.size, this.y - this.size, 2 * this.size, 2 * this.size);
                     mainCtx.restore();
@@ -1761,16 +1765,16 @@ $(function () {
         // validate hex string
         hex = String(hex).replace(/[^0-9a-f]/gi, '');
         if (hex.length < 6) {
-            hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+            hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
         }
         lum = lum || 0;
 
         // convert to decimal and change luminosity
         var rgb = "#", c, i;
         for (i = 0; i < 3; i++) {
-            c = parseInt(hex.substr(i*2,2), 16);
+            c = parseInt(hex.substr(i * 2, 2), 16);
             c = Math.round(Math.min(Math.max(0, c + (c * lum)), 255)).toString(16);
-            rgb += ("00"+c).substr(c.length);
+            rgb += ("00" + c).substr(c.length);
         }
         return rgb;
     };
@@ -1789,7 +1793,7 @@ $(function () {
         return 0;
     };
 
-    var textCache = { },massCache = { };
+    var textCache = {}, massCache = {};
 
     function timeword(d) {
         d = Number(d);
@@ -1801,14 +1805,16 @@ $(function () {
     function drawmystats() {
         // Fill Stats
         var timenow = Date.now();
-        document.getElementById('statsTextMass').innerHTML = stats.score;
-        document.getElementById('statsTextTime').innerHTML = (timeword((timenow - gamestart) / 1000));
-        document.getElementById('statsTextFood').innerHTML = stats.pellet;
-        document.getElementById('statsTextCell').innerHTML = stats.cells;
-        document.getElementById('statsTextVirus').innerHTML = stats.virus;
-        document.getElementById('statsTextPlayer').innerHTML = stats.players;
+        console.log(stats.score)
+        document.getElementById('statsTextMass').innerText = stats.score || 0;
+        document.getElementById('statsTextTime').innerText = (timeword((timenow - gamestart) / 1000));
+        document.getElementById('statsTextFood').innerText = stats.pellet || 0;
+        document.getElementById('statsTextCell').innerText = stats.cells || 0;
+        document.getElementById('statsTextVirus').innerText = stats.virus || 0;
+        document.getElementById('statsTextPlayer').innerText = stats.players || 0;
         $('#advert').show();
     };
+    window.showAd = drawmystats;
     function garbageCollection() {
         var now = Date.now();
 
@@ -1836,21 +1842,21 @@ $(function () {
         }
     };
     function newTextCache(value, fontsize, color) {
-        if(color == '' || color == null) color = "#FFFFFF";
+        if (color == '' || color == null) color = "#FFFFFF";
         var canvas = document.createElement('canvas'),
             ctx = canvas.getContext('2d'),
             lineWidth = settings.showTextOutline ? settings.qualityRef.getTextLineWidth(fontsize) : 0;
 
-        ctx.font = fontsize + 'px Ubuntu';
+        ctx.font = fontsize + 'px ManropeExtraBold';
         canvas.width = (lineWidth * 2) + ctx.measureText(value).width;
         canvas.height = fontsize * 1.3;
 
-        ctx.font = fontsize + 'px Ubuntu';
+        ctx.font = fontsize + 'px ManropeExtraBold';
         ctx.fillStyle = color;
-        if(settings.showTextOutline && lineWidth > 0) {
+        if (settings.showTextOutline && lineWidth > 0) {
             ctx.lineWidth = lineWidth * 0.75;
             ctx.strokeStyle = "#000000";
-            if(lineWidth > 0) {
+            if (lineWidth > 0) {
                 ctx.shadowColor = "#000000";
                 ctx.shadowBlur = lineWidth;
             }
@@ -1858,7 +1864,7 @@ $(function () {
         }
         ctx.fillText(value, lineWidth, fontsize);
 
-        (!textCache[value]) && (textCache[value] = { });
+        (!textCache[value]) && (textCache[value] = {});
         textCache[value][fontsize] = {
             canvas: canvas,
             accessTime: Date.now()
@@ -1878,7 +1884,7 @@ $(function () {
         var i = 1, j, l;
 
         // Search with identical sized text
-        for ( ; i < tolerance; i++) {
+        for (; i < tolerance; i++) {
             // Larger than requested text sizes are better if no match is found
             if ((b = textCache[value][size + i])) {
                 b.accessTime = Date.now();
@@ -1898,19 +1904,19 @@ $(function () {
         if (size > 5000) return; // Integrity check
 
         var identical;
-        if(!tmass) {
+        if (!tmass) {
             var identical = findTextMatch(value, size, color),
                 w = identical.width,
                 h = identical.height;
             mainCtx.drawImage(identical, x - w * .5, y - h * .5, w, h);
         } else {
             var lineWidth = settings.showTextOutline ? settings.qualityRef.getTextLineWidth(size) : 0;
-            mainCtx.font = size + 'px Ubuntu';
+            mainCtx.font = size + 'px ManropeExtraBold';
             mainCtx.fillStyle = "#FFFFFF";
             var linestart = ((lineWidth * 2) + mainCtx.measureText(value).width) / 2;
-            mainCtx.globalAlpha=0.7;
-            if(settings.showTextOutline && lineWidth > 0) {
-                if(lineWidth > 0) {
+            mainCtx.globalAlpha = 0.7;
+            if (settings.showTextOutline && lineWidth > 0) {
+                if (lineWidth > 0) {
                     mainCtx.shadowColor = "#000000";
                     mainCtx.shadowBlur = lineWidth * 2;
                 }
@@ -1974,46 +1980,46 @@ $(function () {
             settings.quality = b;
             settings.qualityRef = qualitySettings[b];
             settings.fastRenderMax = settings.fastRenderMax < 0.3 ? 0.3 : settings.qualityRef.smoothRender;
-            textCache = { };
-            massCache = { };
+            textCache = {};
+            massCache = {};
 
         }
     }
-    wHandle.setserver = function(arg) {
+    wHandle.setserver = function (arg) {
         if (CONNECT_TO != arg) {
             Disconnect();
             Connect(CONNECT_TO = arg);
         }
     };
-    wHandle.setDarkTheme = function(a) {
+    wHandle.setDarkTheme = function (a) {
         settings.darkTheme = a;
         drawServerStat();
     };
-    wHandle.setShowMass = function(a) {
+    wHandle.setShowMass = function (a) {
         settings.showMass = a;
     };
-    wHandle.setBorder = function(a) {
+    wHandle.setBorder = function (a) {
         settings.showBorder = a;
     };
-    wHandle.setMapGrid = function(a) {
+    wHandle.setMapGrid = function (a) {
         settings.showMapGrid = a;
     };
-    wHandle.setSkins = function(a) {
+    wHandle.setSkins = function (a) {
         settings.showSkins = a;
     };
-    wHandle.setColors = function(a) {
+    wHandle.setColors = function (a) {
         settings.showColor = !a;
         if (settings.qualityRef.getTextLineWidth(100) === 0) {
             // Reset caches since if setColors is false all text is black
-            textCache = { };
-            massCache = { };
+            textCache = {};
+            massCache = {};
         }
     };
-    wHandle.setNames = function(a) {
+    wHandle.setNames = function (a) {
         settings.showNames = a;
         drawLeaderboard();
     };
-    wHandle.setSkin = function(a) {
+    wHandle.setSkin = function (a) {
         var value = wHandle.localStorage.getItem("checkbox-50");
         if (value != a) {
             wHandle.localStorage.setItem("checkbox-50", a);
@@ -2022,30 +2028,30 @@ $(function () {
             $('#myskin').val(a);
         }
     }
-    wHandle.setSmooth = function(a) {
+    wHandle.setSmooth = function (a) {
         settings.fastRenderMax = a ? 0.4 : settings.qualityRef.smoothRender;
     };
-    wHandle.setMiniMap = function(a) {
+    wHandle.setMiniMap = function (a) {
         a ? $('#nodes').fadeIn(500) : $('#nodes').fadeOut(500);
         WsSend(new Uint8Array([104, a, 0, 0, 0]));
     };
-    wHandle.setChatHide = function(a) {
+    wHandle.setChatHide = function (a) {
         settings.showChat = a;
         drawChat();
     };
-    wHandle.setDrawAlpha = function(a) {
+    wHandle.setDrawAlpha = function (a) {
         settings.RenderAlpha = a;
     };
-    wHandle.setKillsInfo = function(a) {
+    wHandle.setKillsInfo = function (a) {
         settings.showkills = a;
         $('#livekills').html("");
     };
-    wHandle.setTextOutline = function(a) {
+    wHandle.setTextOutline = function (a) {
         settings.showTextOutline = !a;
-        textCache = { };
-        massCache = { };
+        textCache = {};
+        massCache = {};
     };
-    wHandle.setQuality = function(a) {
+    wHandle.setQuality = function (a) {
         applysettings(a);
         wHandle.localStorage.setItem("checkbox-20", a);
     };
@@ -2053,18 +2059,18 @@ $(function () {
         $('#advert').hide();
         showESCOverlay();
     };
-    wHandle.spectate = function(a) {
+    wHandle.spectate = function (a) {
         WsSend(UINT8_CACHE[1]);
         userScore = 0;
         hideESCOverlay();
     };
-    wHandle.play = function(a) {
+    wHandle.play = function (a) {
         Play(a);
         hideESCOverlay();
     };
-    wHandle.openSkinsList = function() {
+    wHandle.openSkinsList = function () {
         if ($('#inPageModalTitle').text() != "Skins") {
-            $.get('include/gallery.php').then(function(data) {
+            $.get('include/gallery.php').then(function (data) {
                 $('#inPageModalTitle').text("Skins - Click one to sellect it as yours");
                 $('#inPageModalBody').html(data);
             });

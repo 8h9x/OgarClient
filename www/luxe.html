@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Eat cells smaller than you and don't get eaten by the bigger ones, as an MMO">
+    <meta name="keywords" content="agario, agar, io, cell, cells, virus, bacteria, blob, game, games, web game, html5, fun, canvas">
+    <meta name="robots" content="index, follow">
+    <meta name="viewport" content="minimal-ui, width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>Ogar Client</title>
+
+    <link rel="preload" href="/fonts/Manrope/Manrope-ExtraLight.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Light.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+
+    <!--<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' rel='stylesheet'>-->
+    <link href='css/modern-normalize.css' rel='stylesheet' type='text/css'>
+    <link href='css/default.css' rel='stylesheet' type='text/css'>
+    <link href='css/fonts.css' rel='stylesheet' type='text/css'>
+    <link href='css/shell.css' rel='stylesheet' type='text/css'>
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script src="js/log.js"></script>
+    <script src="js/reader.js"></script>
+    <script src="js/writer.js"></script>
+    <script src="js/vtr.js"></script>
+    <script src="js/quad.js"></script>
+    <script src="js/gameclient.js"></script>
+    <script src="js/shw14.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
+
+    <script src="js/components/ChatBox.js" type="module" defer></script>
+    <script src="js/components/MenuPanel.js" type="module" defer></script>
+    <script src="js/settings.js" type="module" defer></script>
+
+    <!--<link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap" rel="stylesheet">-->
+
+    <style>
+        #skin {
+            background: url("./skins/fuego_candy.png") no-repeat center center / cover;
+        }
+    </style>
+    <script type="module">
+        import { ChatBox } from "/js/components/ChatBox.js";
+
+        /*
+        * document body
+        * |
+        * canvas layer (game, game stats, leaderboard)
+        * |
+        * hud layer (minimap, chatbox, on screen controls)
+        * |
+        * menu layer (settings, queue options)
+        */
+
+        class GameClient {
+            constructor() {
+
+            };
+        };
+
+        (() => {
+            const overlayEl = document.createElement("div");
+            document.documentElement.appendChild(overlayEl);
+            overlayEl.classList.add("wip-hud");
+            Object.assign(overlayEl.style, {
+                width: "100%",
+                height: "100%",
+                position: "absolute",
+                top: "0",
+                left: "0",
+                pointerEvents: "none",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "end",
+            });
+
+            const wrapEl = document.createElement("div");
+            overlayEl.appendChild(wrapEl);
+            Object.assign(wrapEl.style, {
+                width: "400px",
+            });
+
+            const chatBoxEl = document.createElement("chat-box");
+            wrapEl.appendChild(chatBoxEl);
+            chatBoxEl.addEventListener("message-submit", event => {
+                console.log(event.detail)
+                window.sendChat(event.detail);
+            });
+
+            const minimapEl = document.createElement("mini-map");
+            overlayEl.appendChild(minimapEl);
+        })();
+    </script>
+</head>
+
+<body>
+    <div id="skin_drawer" class="absolute top-0 left-0 size-full bg-zinc-950/75 backdrop-blur-md hidden items-center justify-start flex-col p-16 gap-2" style="z-index:9999;">
+        <div class="w-full h-fit flex items-center justify-center">
+            <input class="w-96 max-w-screen bg-zinc-100/5 font-semibold border-none p-2 rounded-md text-zinc-100 outline-none" type="text" placeholder="Search for a skin" />
+        </div>
+        <div class="grid py-16 grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2 overflow-y-auto">
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                <span>Fuego Candy</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/ghost.png" />
+                <span>Ghost</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/octobot.png" />
+                <span>Octobot</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/samurai_frog.png" />
+                <span>Samurai Frog</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/space_cat.png" />
+                <span>Space Cat</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/swashbuckle_hampster.png" />
+                <span class="text-wrap break-all">Swashbuckle Hampster</span>
+            </button>
+            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                <img class="size-24 rounded-full" src="http://localhost:8000/skins/techno_dragon.png" />
+                <span>Techno Dragon</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="settings" class="absolute top-0 left-0 size-full bg-zinc-950/5 backdrop-blur-md flex items-center justify-center flex-col" style="display:none; z-index:9999;">
+        <div class="flex flex-col p-5 rounded-xl bg-zinc-950 text-zinc-100 w-xl">
+            <div class="flex flex-row items-center justify-end">
+                <!--<span class="font-bold text-4xl">Settings</span>-->
+                <button class="border-none bg-transparent hover:bg-zinc-800 flex items-center justify-center col-span-1 transition-colors text-zinc-500 hover:text-zinc-300 rounded-md p-2 font-semibold cursor-pointer">
+                    <span class="iconify text-xl" data-icon="ph:x"></span>
+                </button>
+            </div>
+            <div class="w-full grid grid-cols-2 gap-2 h-64">
+                <div class="flex flex-col overflow-hidden">
+                    <span class="font-bold text-xl">Settings</span>
+                    <div class="overflow-y-auto gap-1 flex flex-col pr-2">
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                        <div class="flex w-full justify-between items-center py-3">
+                            <span>Skins</span>
+                            <input type="checkbox" />
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="font-bold text-xl">Keybinds</span>
+                    <div class="overflow-y-auto gap-1 flex flex-col">
+                        <div class="flex w-full justify-between items-center">
+                            <span>Split</span>
+                            <button type="button" class="w-24 border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                <span>SPACE</span>
+                            </button>
+                        </div>
+                        <div class="flex w-full justify-between items-center">
+                            <span>Split</span>
+                            <button type="button" class="w-24 border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                <span>SPACE</span>
+                            </button>
+                        </div>
+                        <div class="flex w-full justify-between items-center">
+                            <span>Split</span>
+                            <button type="button" class="w-24 border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                <span>SPACE</span>
+                            </button>
+                        </div>
+                        <div class="flex w-full justify-between items-center">
+                            <span>Split</span>
+                            <button type="button" class="w-24 border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                <span>SPACE</span>
+                            </button>
+                        </div>
+                        <div class="flex w-full justify-between items-center">
+                            <span>Split</span>
+                            <button type="button" class="w-24 border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                <span>SPACE</span>
+                            </button>
+                        </div>
+                        <div class="flex w-full justify-between items-center">
+                            <span>Split</span>
+                            <button type="button" class="w-24 border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                <span>SPACE</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="overlays" style="opacity: 1; background: none;">
+        <div class="bg-black/5 backdrop-blur-md" style="position: absolute; width: 100%; height: 100%; z-index: 99999; display: flex; align-items: center; justify-content: center;">
+            <div class="flex flex-col p-5 rounded-xl bg-zinc-950 text-zinc-100 gap-5 w-84">
+                <div class="flex flex-row items-center justify-between">
+                    <span class="font-bold text-4xl">Ogar Client</span>
+                    <button class="border-none bg-transparent hover:bg-zinc-800 flex items-center justify-center col-span-1 transition-colors text-zinc-500 hover:text-zinc-300 rounded-md p-2 font-semibold cursor-pointer">
+                        <span class="iconify text-xl" data-icon="ph:gear-six-fill"></span>
+                    </button>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="relative h-fit w-full flex flex-row gap-2">
+                        <div class="flex">
+                            <input id="nickname" type="text" placeholder="Nickname" class="w-full bg-transparent border col-span-4 border-zinc-700 focus:border-blue-500 rounded-md text-zinc-100 p-3 pr-14 text-left outline outline-2 outline-offset-2 outline-transparent focus:outline-blue-500/25 transition-colors font-semibold" />
+                        </div>
+                        <div class="relative bg-rose-500 rounded-md w-15 flex overflow-hidden items-center justify-center">
+                            <div class="h-full w-full rounded-md" id="skin"></div>
+                            <button class="absolute w-full h-full top-0 left-0 text-xs flex items-center justify-end flex-col text-transparent bg-transparent hover:text-zinc-100 hover:bg-zinc-950/60 font-semibold transition-colors border-none cursor-pointer" onclick="(() => {const skinDrawerEl = document.querySelector('#skin_drawer'); skinDrawerEl.classList.remove('hidden'); skinDrawerEl.classList.add('flex' )})();">Change</button>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button type="button" class="border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                            <span class="iconify text-xl" data-icon="ph:eye-fill"></span>
+                        </button>
+                        <button type="submit" class="border-none bg-blue-500 hover:bg-blue-400 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="play(document.querySelector('#nickname').value); return false;">
+                            <span class="iconify text-xl" data-icon="ph:play-fill"></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="flex flex-row items-center gap-2 font-bold">
+                        <span class="bg-zinc-800 w-8 h-0.5 inline-block"></span>
+                        <span class="inline text-nowrap">Server Select</span>
+                        <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
+                    </div>
+                    <div class="grid cols-3 gap-1 text-xs">
+                        <button type="button" class="border-none bg-blue-500 text-zinc-100 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8080');">ffa</button>
+                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8081');">minions</button>
+                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8585');">ultrasplit</button>
+                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8080');">selffeed</button>
+                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('ogar.mivabe.nl:44411');">testground</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="helloDialog" class="hidden"></div>
+    </div>
+
+    <div id="connecting">
+        <div class="bg-zinc-100 text-zinc-950 rounded-xl" style="width: 350px; margin: 100px auto; padding: 5px 15px 5px 15px;">
+            <h2>Connecting</h2>
+            <p> If you cannot connect to the servers, check if you have some anti virus or firewall blocking the connection.</p>
+        </div>
+    </div>
+
+    <!-- // High Score Bar // -->
+    <!--<div id="slide-panel" style="color:white">
+        <a href="#" class="btn" id="opener"><img src="img/str.png" width="25" height="25" /></a>
+        <div class="tab-content" id="scores" style="background: transparent;">
+        </div>
+    </div>-->
+
+    <!-- // Advertizment Area when you die // -->
+    <div id="advert" class="bg-black/5 backdrop-blur-md">
+        <div id="scorebox" class="shadow-lg shadow-zinc-950/50 bg-zinc-950 rounded-xl p-5 h-fit">
+            <div id="stats" style="width: 100%; height: 230px; padding: 0px 0px 300px; overflow: hidden;" class="agario-panel">
+                <canvas height="230" width="320" id="statsGraph"></canvas>
+                <center class="flex w-full flex-col gap-4">
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
+                            <span class="text-blue-500 text-2xl font-bold" id="statsTextTime">0</span>
+                            <span class="text-zinc-200 text-sm">Time Alive</span>
+                        </div>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
+                            <span class="text-blue-500 text-2xl font-bold" id="statsTextMass">0:00</span>
+                            <span class="text-zinc-200 text-sm">Highest Mass</span>
+                        </div>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
+                            <span class="text-blue-500 text-2xl font-bold" id="statsTextFood">0</span>
+                            <span class="text-zinc-200 text-sm">Pellets Eaten</span>
+                        </div>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
+                            <span class="text-blue-500 text-2xl font-bold" id="statsTextCell">0</span>
+                            <span class="text-zinc-200 text-sm">Cells Eaten</span>
+                        </div>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
+                            <span class="text-blue-500 text-2xl font-bold" id="statsTextVirus">0</span>
+                            <span class="text-zinc-200 text-sm">Virus Eaten</span>
+                        </div>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
+                            <span class="text-blue-500 text-2xl font-bold" id="statsTextPlayer">0</span>
+                            <span class="text-zinc-200 text-sm">Players Eaten</span>
+                        </div>
+                    </div>
+                    <button id="statsContinue" class="border-none bg-blue-500 hover:bg-blue-400 flex items-center justify-center col-span-1 w-full transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" data-itr="continue" onclick="closeStats();" type="button">Continue</button>
+                </center>
+                <!--<div id="statsHighestMassContainer" class="bg-zinc-900 rounded-md"><span id="statsTextMass" class="text-blue-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_highest_mass">Highest mass</span></div>
+                <div id="statsTimeAliveContainer" class="bg-zinc-900 rounded-md"><span id="statsTextTime" class="text-blue-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_time_alive">Time alive</span></div>
+                <div id="statsPelletsContainer" class="bg-zinc-900 rounded-md"><span id="statsTextFood" class="text-blue-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_pellets_eat">Pellets eaten</span></div>
+                <div id="statsCellsEatenContainer" class="bg-zinc-900 rounded-md"><span id="statsTextCell" class="text-blue-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_cell_eat">Cells eaten</span></div>
+                <div id="statsVirusContainer" class="bg-zinc-900 rounded-md"><span id="statsTextVirus" class="text-blue-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_virus_eat">Virus eaten</span></div>
+                <div id="statsPlayerContainer" class="bg-zinc-900 rounded-md"><span id="statsTextPlayer" class="text-blue-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_players_eat">Players eaten</span></div>-->
+            </div>
+        </div>
+    </div>
+
+    <canvas id="canvas" width="800" height="600"></canvas>
+    <div id="livekills"></div>
+    <input class="hidden" type="text" id="chat_textbox" placeholder="Press enter to chat!" maxlength="200" />
+<script>
+//Hold a down and it will keep firing untill you take your finger off!
+var interval;
+var switchy = false;
+$(document).on('keydown',function(e){
+    if(e.keyCode == 81){
+        if(switchy){
+            return;
+        }
+        switchy = true;
+        interval = setInterval(function() {
+            $("body").trigger($.Event("keydown", { keyCode: 87}));
+            $("body").trigger($.Event("keyup", { keyCode: 87}));
+        }, 3);//increase this number to make it fire them out slower
+    }
+});
+
+$(document).on('keyup',function(e){
+    if(e.keyCode == 81){
+        switchy = false;
+        clearInterval(interval);
+        return;
+    }
+});
+</script>
+<script type='text/javascript' charset='utf-8'>
+    $(document).ready(function(){
+        // $('#scores').load('highscores.php').fadeIn(750);
+    });
+    var refreshId = setInterval( function() {
+        // $('#scores').fadeOut('slow').load('highscores.php').slideDown(1500);
+    } , 150000);
+</script>
+</body>
+</html>

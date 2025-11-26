@@ -1,12 +1,3 @@
-<?php
-header('Last-Modified: '. gmdate("D, d M Y H:i:s").' GMT');
-header('Cache-Control: no-store, no-cache, must-revalidate');
-header('Cache-Control: post-check=0, pre-check=0', false);
-header('Pragma: no-cache');
-header('Content-Type: text/html;charset=utf-8');
-date_default_timezone_set('America/Los_Angeles');
-error_reporting(0);
-?>
 <!DOCTYPE html>
 <html>
 <head>
@@ -21,11 +12,21 @@ error_reporting(0);
 
     <title>OgarServ</title>
 
-    <link href='https://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
-    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' rel='stylesheet'>
-    <link href='css/default.css' rel='stylesheet' type='text/css'>
+    <link rel="preload" href="/fonts/Manrope/Manrope-ExtraLight.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Light.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Regular.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Medium.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-Bold.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/Manrope/Manrope-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
 
-    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
+    <!--<link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' rel='stylesheet'>-->
+    <link href='css/modern-normalize.css' rel='stylesheet' type='text/css'>
+    <link href='css/default.css' rel='stylesheet' type='text/css'>
+    <link href='css/fonts.css' rel='stylesheet' type='text/css'>
+
+    <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
     <script src="js/log.js"></script>
     <script src="js/reader.js"></script>
     <script src="js/writer.js"></script>
@@ -35,6 +36,7 @@ error_reporting(0);
     <script src="js/shw14.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script src="js/components/ChatBox.js" type="module" defer></script>
 </head>
 
 <body>
@@ -62,6 +64,7 @@ error_reporting(0);
             <form role="form">
                 <div class="form-group" style="text-align: center;">
                     <h2 id="title">OgarServ 1.7 Client</h2>
+                    <chat-box></chat-box>
                 </div>
 
                 <div class="form-group">
@@ -78,6 +81,7 @@ if( $serverip != '' )
 }
 ?>
                         <option value="ogar.mivabe.nl:44411">Test Server</option>
+                        <option value="localhost:8080">Local 8080</option>
                     </select>
                     <br clear="both" />
                 </div>
@@ -145,11 +149,6 @@ if( $serverip != '' )
             <hr/>
             <!-- // Your ADD Window use 320x100 ass add size // -->
             <div class="form-group" style="height: 100px; width: 320px;margin: 0px 3.5px;text-align: center;">
-<?php
-
-// PUT YOUR Google ADDS code here use the 320x100 sized add banner
-// Example (from ogar.mivabe.nl)
-echo '
                 <!-- Smaller Add -->
                 <ins class="adsbygoogle"
                      style="display:inline-block;width:320px;height:100px"
@@ -158,9 +157,6 @@ echo '
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-';
-
-?>
             </div>
             <br>
             <span id="jversion" class="footer"></span>
@@ -232,11 +228,6 @@ echo '
             <hr/>
             <!-- // Your ADD Window use 320x100 ass add size // -->
             <div class="form-group" style="height: 100px; width: 320px;margin: 0px 3.5px;text-align: center;">
-<?php
-
-// PUT YOUR Google ADDS code here use the 320x100 sized add banner
-// Example (from ogar.mivabe.nl)
-echo '
                 <!-- Smaller Add -->
                 <ins class="adsbygoogle"
                      style="display:inline-block;width:320px;height:100px"
@@ -245,9 +236,6 @@ echo '
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-';
-
-?>
             </div>
         </div>
     </div>
@@ -282,10 +270,10 @@ $(document).on('keyup',function(e){
 </script>
 <script type='text/javascript' charset='utf-8'>
     $(document).ready(function(){
-        $('#scores').load('highscores.php').fadeIn(750);
+        // $('#scores').load('highscores.php').fadeIn(750);
     });
     var refreshId = setInterval( function() {
-        $('#scores').fadeOut('slow').load('highscores.php').slideDown(1500);
+        // $('#scores').fadeOut('slow').load('highscores.php').slideDown(1500);
     } , 150000);
 </script>
 </body>
