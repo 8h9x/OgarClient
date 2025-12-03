@@ -41,7 +41,12 @@
 
     <script src="js/components/ChatBox.js" type="module" defer></script>
     <script src="js/components/MenuPanel.js" type="module" defer></script>
+    <script src="js/components/PaginatedContainer.js" type="module" defer></script>
     <script src="js/settings.js" type="module" defer></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <!--<link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +54,7 @@
 
     <style>
         #skin {
-            background: url("./skins/fuego_candy.png") no-repeat center center / cover;
+            background: url("http://localhost:8000/skins/evil_vampire.png") no-repeat center center / cover;
         }
     </style>
     <script type="module">
@@ -104,87 +109,74 @@
             const minimapEl = document.createElement("mini-map");
             overlayEl.appendChild(minimapEl);
         })();
+
+        window.transitionToLobby = () => {
+            const lobbyBtn = document.querySelector("#navigateLobby");
+            const lockerBtn = document.querySelector("#navigateLocker");
+
+            lobbyBtn.classList.add("text-zinc-100");
+            lobbyBtn.classList.remove("text-zinc-500");
+
+            lockerBtn.classList.remove("text-zinc-100");
+            lockerBtn.classList.add("text-zinc-500");
+
+            document.querySelector("#locker").classList.add("translate-x-full");
+        };
+        window.transitionToLocker = () => {
+            const lockerBtn = document.querySelector("#navigateLocker");
+            const lobbyBtn = document.querySelector("#navigateLobby");
+
+            lockerBtn.classList.add("text-zinc-100");
+            lockerBtn.classList.remove("text-zinc-500");
+
+            lobbyBtn.classList.remove("text-zinc-100");
+            lobbyBtn.classList.add("text-zinc-500");
+
+            document.querySelector("#locker").classList.remove("translate-x-full");
+        };
+        window.swapLockerHat = (name) => {
+            const oldContainerEl = document.querySelector("#hat-preview-container");
+            if (!oldContainerEl) return;
+
+            const containerEl = document.createElement("div");
+            containerEl.id = "hat-preview-container";
+            containerEl.classList.add("absolute", "left-0", "w-full");
+
+            const imgEl = document.createElement("img");
+            imgEl.src = `https://content.unnamedcell.com/hats/${name}.png`;
+            imgEl.alt = `${name}-hat`;
+            imgEl.classList.add("h-full");
+
+            if (name === "crown" || name === "ice-crown") {
+                containerEl.classList.add("h-36", "z-0", "top-[-56%]");
+                imgEl.classList.add("w-42");
+            } else if (name === "commander") {
+                containerEl.classList.add("h-30", "z-1", "top-[-35%]");
+                imgEl.classList.add("w-44");
+            };
+
+            containerEl.appendChild(imgEl);
+            oldContainerEl.replaceWith(containerEl);
+        };
+        window.swapLockerSkin = (event) => {
+            if (!event || !event.target) return;
+
+            const skinEl = document.querySelector("#skin");
+            if (!skinEl) return;
+
+            const skinUrl = event.target.closest("button").querySelector("img").src;
+            if (!skinUrl) return;
+
+            skinEl.style.backgroundImage = `url("${skinUrl}")`;
+            skinEl.style.backgroundRepeat = "no-repeat";
+            skinEl.style.backgroundPosition = "center center";
+            skinEl.style.backgroundSize = "cover";
+        };
     </script>
 </head>
 
 <body>
-    <div id="skin_drawer" class="absolute top-0 left-0 size-full bg-zinc-950/75 backdrop-blur-md hidden items-center justify-start flex-col p-16 gap-2" style="z-index:9999;">
-        <div class="w-full h-fit flex items-center justify-center">
-            <input class="w-96 max-w-screen bg-zinc-100/5 font-semibold border-none p-2 rounded-md text-zinc-100 outline-none" type="text" placeholder="Search for a skin" />
-        </div>
-        <div class="grid py-16 grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 gap-2 overflow-y-auto">
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
-                <span>Fuego Candy</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/ghost.png" />
-                <span>Ghost</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/octobot.png" />
-                <span>Octobot</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/samurai_frog.png" />
-                <span>Samurai Frog</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/space_cat.png" />
-                <span>Space Cat</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/swashbuckle_hampster.png" />
-                <span class="text-wrap break-all">Swashbuckle Hampster</span>
-            </button>
-            <button class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
-                <img class="size-24 rounded-full" src="http://localhost:8000/skins/techno_dragon.png" />
-                <span>Techno Dragon</span>
-            </button>
-        </div>
-    </div>
-
-    <div id="settings" class="absolute top-0 left-0 size-full bg-zinc-950/5 backdrop-blur-md flex items-center justify-center flex-col" style="display:none; z-index:9999;">
+    <div id="settings" class="absolute top-0 left-0 size-full bg-zinc-950/5 backdrop-blur-md items-center justify-center flex-col hidden" style="z-index:9999;">
         <div class="flex flex-col p-5 rounded-xl bg-zinc-950 text-zinc-100 w-xl">
             <div class="flex flex-row items-center justify-end">
                 <!--<span class="font-bold text-4xl">Settings</span>-->
@@ -277,44 +269,232 @@
 
     <div id="overlays" style="opacity: 1; background: none;">
         <div class="bg-black/5 backdrop-blur-md" style="position: absolute; width: 100%; height: 100%; z-index: 99999; display: flex; align-items: center; justify-content: center;">
-            <div class="flex flex-col p-5 rounded-xl bg-zinc-950 text-zinc-100 gap-5 w-84">
-                <div class="flex flex-row items-center justify-between">
-                    <span class="font-bold text-4xl">Ogar Client</span>
-                    <button class="border-none bg-transparent hover:bg-zinc-800 flex items-center justify-center col-span-1 transition-colors text-zinc-500 hover:text-zinc-300 rounded-md p-2 font-semibold cursor-pointer">
-                        <span class="iconify text-xl" data-icon="ph:gear-six-fill"></span>
-                    </button>
+            <div class="grid grid-cols-3 gap-2 relative">
+                <div class="flex flex-row items-center justify-center p-4 col-span-3 relative">
+                    <img class="h-16" src="https://media.discordapp.net/attachments/1434838053385408533/1445261764114513920/image.png?ex=692fb468&is=692e62e8&hm=4b6d139f0267d7df4211f49db359fe1a15d8073c4c44a6c3eee332fbe25a84c1&=&format=webp&quality=lossless&width=1808&height=334" alt="logo" />
+                    <!--<span class="font-bold text-7xl font-exo-2 text-orange-500">cellkit client</span>-->
                 </div>
-                <div class="flex flex-col gap-2">
-                    <div class="relative h-fit w-full flex flex-row gap-2">
-                        <div class="flex">
-                            <input id="nickname" type="text" placeholder="Nickname" class="w-full bg-transparent border col-span-4 border-zinc-700 focus:border-blue-500 rounded-md text-zinc-100 p-3 pr-14 text-left outline outline-2 outline-offset-2 outline-transparent focus:outline-blue-500/25 transition-colors font-semibold" />
-                        </div>
-                        <div class="relative bg-rose-500 rounded-md w-15 flex overflow-hidden items-center justify-center">
-                            <div class="h-full w-full rounded-md" id="skin"></div>
-                            <button class="absolute w-full h-full top-0 left-0 text-xs flex items-center justify-end flex-col text-transparent bg-transparent hover:text-zinc-100 hover:bg-zinc-950/60 font-semibold transition-colors border-none cursor-pointer" onclick="(() => {const skinDrawerEl = document.querySelector('#skin_drawer'); skinDrawerEl.classList.remove('hidden'); skinDrawerEl.classList.add('flex' )})();">Change</button>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" class="border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
-                            <span class="iconify text-xl" data-icon="ph:eye-fill"></span>
+                <div class="flex flex-col p-5 rounded-xl bg-zinc-950 text-zinc-100 w-84 h-96 items-center justify-between">
+                    <div class="flex flex-row items-center gap-2 w-full font-bold">
+                        <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
+                        <button id="navigateLobby" onclick="window.transitionToLobby()" class="transition-colors flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-100 font-bold">
+                            <span class="iconify text-xl" data-icon="ph:castle-turret-fill"></span>
+                            <span class="inline text-nowrap uppercase">lobby</span>
                         </button>
-                        <button type="submit" class="border-none bg-blue-500 hover:bg-blue-400 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="play(document.querySelector('#nickname').value); return false;">
-                            <span class="iconify text-xl" data-icon="ph:play-fill"></span>
+                        <span class="bg-zinc-800 w-64 h-0.5 inline-block"></span>
+                        <button id="navigateLocker" onclick="window.transitionToLocker()" class="transition-colors flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-500 font-bold">
+                            <span class="iconify text-xl" data-icon="ph:coat-hanger-fill"></span>
+                            <span class="inline text-nowrap uppercase">locker</span>
                         </button>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-2">
-                    <div class="flex flex-row items-center gap-2 font-bold">
-                        <span class="bg-zinc-800 w-8 h-0.5 inline-block"></span>
-                        <span class="inline text-nowrap">Server Select</span>
                         <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
                     </div>
-                    <div class="grid cols-3 gap-1 text-xs">
-                        <button type="button" class="border-none bg-blue-500 text-zinc-100 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8080');">ffa</button>
-                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8081');">minions</button>
-                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8585');">ultrasplit</button>
-                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('localhost:8080');">selffeed</button>
-                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-4 font-bold hover:bg-zinc-700 transition-colors cursor-pointer uppercase" onclick="setserver('ogar.mivabe.nl:44411');">testground</button>
+                    <button class="scale-90 size-50 rounded-full border-none cursor-pointer flex items-center justify-center bg-zinc-900 relative hover:scale-100 transition-transform transition-duration-300" onclick="window.transitionToLocker()">
+                        <div id="hat-preview-container" class="h-36 absolute top-[-56%] left-0 z-0 w-full"><img class="h-full w-42" src="https://content.unnamedcell.com/hats/crown.png" /></div>
+                        <!--<div id="hat-preview-container" class="h-36 absolute top-[-56%] left-0 z-0 w-full"><img class="h-full w-42" src="https://content.unnamedcell.com/hats/ice-crown.png" /></div>-->
+                        <!--<div id="hat-preview-container" class="h-30 absolute top-[-35%] left-0 z-1 w-full"><img class="h-full w-44" src="https://content.unnamedcell.com/hats/commander.png" /></div>-->
+                        <div class="size-full rounded-full absolute" id="skin"></div>
+                        <span class="font-exo-2 z-1 text-white font-bold text-5xl bg-zinc-950/25 rounded-md px-2 py-1 [text-shadow:2px_2px_0px_rgba(0,0,0,0.75)]">cell</span>
+                    </button>
+                </div>
+                <div class="text-zinc-100 gap-2 h-fit col-span-2 grid grid-cols-2 relative overflow-hidden">
+                    <div id="locker" class="flex flex-col gap-2 bg-zinc-950 p-5 rounded-xl gap-5 absolute top-0 left-0 size-full z-10 translate-x-full transition-transform">
+                        <div class="flex flex-col gap-3 overflow-hidden size-full">
+                            <div class="flex flex-row items-center gap-2 font-bold">
+                                <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
+                                <button class="flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-100 font-bold">
+                                    <span class="iconify text-xl" data-icon="ph:mask-happy-fill"></span>
+                                    <span class="inline text-nowrap uppercase">skin</span>
+                                </button>
+                                <span class="bg-zinc-800 w-64 h-0.5 inline-block"></span>
+                                <button class="flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-500 font-bold">
+                                    <span class="iconify text-xl" data-icon="ph:cowboy-hat-fill"></span>
+                                    <span class="inline text-nowrap uppercase">hat</span>
+                                </button>
+                                <span class="bg-zinc-800 w-64 h-0.5 inline-block"></span>
+                                <button class="flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-500 font-bold">
+                                    <span class="iconify text-xl" data-icon="ph:sparkle-fill"></span>
+                                    <span class="inline text-nowrap uppercase">name</span>
+                                </button>
+                                <span class="bg-zinc-800 w-64 h-0.5 inline-block"></span>
+                                <button class="flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-500 font-bold">
+                                    <span class="iconify text-xl" data-icon="ph:person-simple-throw-fill"></span>
+                                    <span class="inline text-nowrap uppercase">taunt</span>
+                                </button>
+                                <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
+                            </div>
+                            <div class="relative h-full overflow-hidden rounded-none gap-2 flex flex-col">
+                                <div class="absolute top-0 left-0 size-full pointer-events-none" style="box-shadow: inset 0 -20px 20px -10px rgba(0, 0, 0, 0.5);"></div>
+                                <div class="w-full h-fit flex items-center justify-center">
+                                    <input class="w-full bg-zinc-100/5 font-semibold border-none p-2 rounded-md text-zinc-100 outline-none" type="text" placeholder="Filter..." />
+                                </div>
+                                <div class="grid cols-5 gap-1 overflow-x-auto">
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/fuego_candy.png" />
+                                        <span>Fuego Candy</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/ghost.png" />
+                                        <span>Ghost</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/octobot.png" />
+                                        <span>Octobot</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/samurai_frog.png" />
+                                        <span>Samurai Frog</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/space_cat.png" />
+                                        <span>Space Cat</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/swashbuckle_hampster.png" />
+                                        <span class="text-wrap break-all">Swashbucklester</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/techno_dragon.png" />
+                                        <span>Techno Dragon</span>
+                                    </button>
+                                    <button onclick="window.swapLockerSkin(event)" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <img class="size-24 rounded-full" src="http://localhost:8000/skins/evil_vampire.png" />
+                                        <span>Evil Vampire</span>
+                                    </button>
+                                    <button onclick="window.swapLockerHat('crown')" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <div class="size-24 flex items-center justify-center">
+                                            <img class="size-24 rounded-full" src="https://content.unnamedcell.com/hats/crown.png" />
+                                        </div>
+                                        <span>Crown</span>
+                                    </button>
+                                    <button onclick="window.swapLockerHat('ice-crown')" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <div class="size-24 flex items-center justify-center">
+                                            <img class="size-24 rounded-full" src="https://content.unnamedcell.com/hats/ice-crown.png" />
+                                        </div>
+                                        <span>Ice Crown</span>
+                                    </button>
+                                    <button onclick="window.swapLockerHat('commander')" class="flex flex-col text-xs items-center font-semibold text-zinc-100 gap-1 bg-transparent border-none cursor-pointer hover:bg-zinc-100/5 rounded-lg transition-colors p-2">
+                                        <div class="size-24 flex items-center justify-center">
+                                            <img class="w-24 rounded-full" src="https://content.unnamedcell.com/hats/commander.png" />
+                                        </div>
+                                        <span>Commander</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col text-zinc-100 w-84 h-fit gap-2">
+                        <div class="flex flex-col gap-2 bg-zinc-950 p-5 rounded-xl gap-5">
+                            <div class="relative h-fit w-full flex flex-row">
+                                <div class="flex w-full">
+                                    <input id="nickname" type="text" placeholder="Nickname" class="w-full bg-transparent border w-full border-zinc-700 focus:border-orange-500 rounded-md text-zinc-100 p-3 pr-14 text-left outline outline-2 outline-offset-2 outline-transparent focus:outline-orange-500/25 transition-colors font-semibold" />
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="submit" class="text-lg border-none bg-orange-500 hover:bg-orange-400 flex items-center justify-center col-span-2 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="play(document.querySelector('#nickname').value); return false;">
+                                    PLAY
+                                </button>
+                                <button type="button" class="text-sm border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="(() => {const skinDrawerEl = document.querySelector('#settings'); skinDrawerEl.classList.remove('hidden'); skinDrawerEl.classList.add('flex' )})();">
+                                    <span class="iconify text-xl" data-icon="ph:gear-six-fill"></span>
+                                </button>
+                                <button type="button" class="text-sm border-none bg-zinc-800 hover:bg-zinc-700 flex items-center justify-center col-span-1 transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" onclick="spectate()">
+                                    <span class="iconify text-xl" data-icon="ph:eye-fill"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex flex-col p-5 rounded-xl bg-zinc-950 text-zinc-100 gap-5 w-84 h-fit">
+                            <div class="bg-zinc-100/5 h-84 flex items-center justify-center text-2xl text-zinc-400" style="height:275px;">296 x 275</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col justify-between p-5 rounded-xl bg-zinc-950 text-zinc-100 gap-2 w-84 h-96">
+                        <div class="flex flex-col gap-3 overflow-hidden h-full">
+                            <div class="flex flex-row items-center gap-2 font-bold">
+                                <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
+                                <button onclick="(() => {document.querySelector('#server-list').goto(0)})()" class="flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-100 font-bold">
+                                    <span class="iconify text-xl" data-icon="ph:globe-hemisphere-west-fill"></span>
+                                    <span class="inline text-nowrap uppercase">na</span>
+                                </button>
+                                <span class="bg-zinc-800 w-64 h-0.5 inline-block"></span>
+                                <button onclick="(() => {document.querySelector('#server-list').goto(1)})()" class="flex items-center justify-center gap-1 cursor-pointer bg-transparent border-none text-zinc-500 font-bold">
+                                    <span class="iconify text-xl" data-icon="ph:globe-hemisphere-east-fill"></span>
+                                    <span class="inline text-nowrap uppercase">eu</span>
+                                </button>
+                                <span class="bg-zinc-800 w-full h-0.5 inline-block"></span>
+                            </div>
+                            <div class="relative h-full overflow-hidden rounded-md">
+                                <div class="absolute top-0 left-0 size-full pointer-events-none" style="box-shadow: inset 0 -20px 20px -10px rgba(0, 0, 0, 0.5); z-index: 999;"></div>
+                                <paginated-container id="server-list" class="h-full overflow-hidden relative">
+                                    <div class="grid cols-2 gap-1 overflow-x-auto w-full h-max max-h-full">
+                                        <button type="button" class="border-none bg-orange-500 text-zinc-100 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">ffa</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="titlecase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">minions</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">ultrasplit</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">selffeed</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">b</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8585');">
+                                            <span class="uppercase text-lg">testground</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">b</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">b</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">b</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">b</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8585');">
+                                            <span class="uppercase text-lg">testground</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="lowercase text-xs">us-east</span>
+                                        </button>
+                                    </div>
+                                    <div class="grid cols-2 gap-1 overflow-x-auto w-full h-max max-h-full">
+                                        <button type="button" class="border-none bg-orange-500 text-zinc-100 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">ffa</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="titlecase text-xs">eu-central</span>
+                                        </button>
+                                        <button type="button" class="border-none bg-zinc-800 text-zinc-300 rounded-md py-1 px-2 font-bold hover:bg-zinc-700 transition-colors cursor-pointer flex flex-col items-start" onclick="setserver('localhost:8080');">
+                                            <span class="uppercase text-lg">minions</span>
+                                            <span class="lowercase text-xs">3 / 117</span>
+                                            <span class="titlecase text-xs">eu-central</span>
+                                        </button>
+                                    </div>
+                                </paginated-container>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -343,39 +523,39 @@
                 <canvas height="230" width="320" id="statsGraph"></canvas>
                 <center class="flex w-full flex-col gap-4">
                     <div class="grid grid-cols-2 gap-2">
-                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
-                            <span class="text-blue-500 text-2xl font-bold" id="statsTextTime">0</span>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-orange-500/10 rounded-lg">
+                            <span class="text-orange-500 text-2xl font-bold" id="statsTextTime">0</span>
                             <span class="text-zinc-200 text-sm">Time Alive</span>
                         </div>
-                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
-                            <span class="text-blue-500 text-2xl font-bold" id="statsTextMass">0:00</span>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-orange-500/10 rounded-lg">
+                            <span class="text-orange-500 text-2xl font-bold" id="statsTextMass">0:00</span>
                             <span class="text-zinc-200 text-sm">Highest Mass</span>
                         </div>
-                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
-                            <span class="text-blue-500 text-2xl font-bold" id="statsTextFood">0</span>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-orange-500/10 rounded-lg">
+                            <span class="text-orange-500 text-2xl font-bold" id="statsTextFood">0</span>
                             <span class="text-zinc-200 text-sm">Pellets Eaten</span>
                         </div>
-                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
-                            <span class="text-blue-500 text-2xl font-bold" id="statsTextCell">0</span>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-orange-500/10 rounded-lg">
+                            <span class="text-orange-500 text-2xl font-bold" id="statsTextCell">0</span>
                             <span class="text-zinc-200 text-sm">Cells Eaten</span>
                         </div>
-                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
-                            <span class="text-blue-500 text-2xl font-bold" id="statsTextVirus">0</span>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-orange-500/10 rounded-lg">
+                            <span class="text-orange-500 text-2xl font-bold" id="statsTextVirus">0</span>
                             <span class="text-zinc-200 text-sm">Virus Eaten</span>
                         </div>
-                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-blue-500/10 rounded-lg">
-                            <span class="text-blue-500 text-2xl font-bold" id="statsTextPlayer">0</span>
+                        <div class="py-2 flex gap-1 flex-col bg-gradient-to-br from-zinc-900 to-orange-500/10 rounded-lg">
+                            <span class="text-orange-500 text-2xl font-bold" id="statsTextPlayer">0</span>
                             <span class="text-zinc-200 text-sm">Players Eaten</span>
                         </div>
                     </div>
-                    <button id="statsContinue" class="border-none bg-blue-500 hover:bg-blue-400 flex items-center justify-center col-span-1 w-full transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" data-itr="continue" onclick="closeStats();" type="button">Continue</button>
+                    <button id="statsContinue" class="border-none bg-orange-500 hover:bg-orange-400 flex items-center justify-center col-span-1 w-full transition-colors text-zinc-100 rounded-md py-3 font-semibold cursor-pointer" data-itr="continue" onclick="closeStats();" type="button">Continue</button>
                 </center>
-                <!--<div id="statsHighestMassContainer" class="bg-zinc-900 rounded-md"><span id="statsTextMass" class="text-blue-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_highest_mass">Highest mass</span></div>
-                <div id="statsTimeAliveContainer" class="bg-zinc-900 rounded-md"><span id="statsTextTime" class="text-blue-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_time_alive">Time alive</span></div>
-                <div id="statsPelletsContainer" class="bg-zinc-900 rounded-md"><span id="statsTextFood" class="text-blue-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_pellets_eat">Pellets eaten</span></div>
-                <div id="statsCellsEatenContainer" class="bg-zinc-900 rounded-md"><span id="statsTextCell" class="text-blue-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_cell_eat">Cells eaten</span></div>
-                <div id="statsVirusContainer" class="bg-zinc-900 rounded-md"><span id="statsTextVirus" class="text-blue-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_virus_eat">Virus eaten</span></div>
-                <div id="statsPlayerContainer" class="bg-zinc-900 rounded-md"><span id="statsTextPlayer" class="text-blue-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_players_eat">Players eaten</span></div>-->
+                <!--<div id="statsHighestMassContainer" class="bg-zinc-900 rounded-md"><span id="statsTextMass" class="text-orange-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_highest_mass">Highest mass</span></div>
+                <div id="statsTimeAliveContainer" class="bg-zinc-900 rounded-md"><span id="statsTextTime" class="text-orange-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_time_alive">Time alive</span></div>
+                <div id="statsPelletsContainer" class="bg-zinc-900 rounded-md"><span id="statsTextFood" class="text-orange-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_pellets_eat">Pellets eaten</span></div>
+                <div id="statsCellsEatenContainer" class="bg-zinc-900 rounded-md"><span id="statsTextCell" class="text-orange-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_cell_eat">Cells eaten</span></div>
+                <div id="statsVirusContainer" class="bg-zinc-900 rounded-md"><span id="statsTextVirus" class="text-orange-500 stats-highest-mass"></span><span id="statsSubtext" data-itr="stats_virus_eat">Virus eaten</span></div>
+                <div id="statsPlayerContainer" class="bg-zinc-900 rounded-md"><span id="statsTextPlayer" class="text-orange-500 stats-time-alive"></span><span id="statsSubtext" data-itr="stats_players_eat">Players eaten</span></div>-->
             </div>
         </div>
     </div>
